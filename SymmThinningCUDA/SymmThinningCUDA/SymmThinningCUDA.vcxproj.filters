@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{cb69c88f-81be-4d03-9e77-a7a3cc208177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{c759918b-1444-445e-a4ce-4e49258345c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{6e556b11-68bd-4749-a907-1d0e6d8137e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libs">
+      <UniqueIdentifier>{a546f139-7c08-421a-82e5-921c302511ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libs\IoMngr">
+      <UniqueIdentifier>{2553cb49-de85-44a2-84df-6129143dbee7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\attachment.cuh">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\clique.cuh">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cuda_includes.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\neighbor.cuh">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\thinning.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\thinning_base.cuh">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\binvox.h">
+      <Filter>Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lodepng.h">
+      <Filter>Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\png_loader.h">
+      <Filter>Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="test\for_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="test\test_attach.cuh">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="test\test_clique.cuh">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\param_parser.h">
+      <Filter>Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\thinning_details.cuh">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\png_io.h">
+      <Filter>Libs\IoMngr</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\h5_io.h">
+      <Filter>Libs\IoMngr</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\io_shared.h">
+      <Filter>Libs\IoMngr</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="main.cu" />
+    <CudaCompile Include="src\attachment.cu">
+      <Filter>Source</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\clique.cu">
+      <Filter>Source</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\neighbor.cu">
+      <Filter>Source</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\thinning.cu">
+      <Filter>Source</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\thinning_details.cu">
+      <Filter>Source</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="libs\binvox.cpp">
+      <Filter>Libs</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lodepng.cpp">
+      <Filter>Libs</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\png_loader.cpp">
+      <Filter>Libs</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\png_io.cpp">
+      <Filter>Libs\IoMngr</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\h5_io.cpp">
+      <Filter>Libs\IoMngr</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\io_shared.cpp">
+      <Filter>Libs\IoMngr</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
