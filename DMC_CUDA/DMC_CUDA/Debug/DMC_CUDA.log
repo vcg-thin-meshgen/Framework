@@ -1,0 +1,24 @@
+﻿  
+  F:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin"  -IF:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA\\lodepng -IF:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA\\src -IF:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA\\include -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G   --keep-dir Debug -maxrregcount=0  --machine 32 --compile   -g   -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd " -o Debug\dmc.cu.obj "F:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA\src\dmc.cu" -clean 
+  dmc.cu
+  Compiling CUDA source file src\dmc.cu...
+  
+  F:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin"  -IF:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA\\lodepng -IF:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA\\src -IF:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA\\include -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G   --keep-dir Debug -maxrregcount=0  --machine 32 --compile -cudart static  -g   -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd " -o Debug\dmc.cu.obj "F:\Ky\framework\MeshGeneration\DMC_CUDA\DMC_CUDA\src\dmc.cu" 
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(1129): warning : missing return statement at end of non-void function "dmc::pt_pair_edge_lut"
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(1296): warning : missing return statement at end of non-void function "dmc::get_index3D_by_dir"
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(1675): warning : missing return statement at end of non-void function "dmc::CircularEdgeRange::CircularEdgeIterator::get_lut_index_by_edge"
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(1708): warning : missing return statement at end of non-void function "dmc::circular_edge_exceed_boundary"
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(1129): warning : missing return statement at end of non-void function "dmc::pt_pair_edge_lut"
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(1296): warning : missing return statement at end of non-void function "dmc::get_index3D_by_dir"
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(1675): warning : missing return statement at end of non-void function "dmc::CircularEdgeRange::CircularEdgeIterator::get_lut_index_by_edge"
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(1708): warning : missing return statement at end of non-void function "dmc::circular_edge_exceed_boundary"
+CUDACOMPILE : ptxas warning : Stack size for entry function '_ZN3dmc21init_voxels_info_kernEPNS_10_VoxelInfoEjPKf5uint3f' cannot be statically determined
+  dmc.cu
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(851): warning C4800: 'dmc::_VoxelInfo::info_type' : forcing value to bool 'true' or 'false' (performance warning)
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(862): warning C4800: 'dmc::_VoxelInfo::info_type' : forcing value to bool 'true' or 'false' (performance warning)
+F:/Ky/framework/MeshGeneration/DMC_CUDA/DMC_CUDA/src/dmc.cu(868): warning C4800: 'dmc::_VoxelInfo::info_type' : forcing value to bool 'true' or 'false' (performance warning)
+  DMC_CUDA.vcxproj -> F:\Ky\framework\MeshGeneration\Debug\DMC_CUDA.lib
+  copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart*.dll" "F:\Ky\framework\MeshGeneration\Debug\"
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart32_75.dll
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart64_75.dll
+          2 file(s) copied.
