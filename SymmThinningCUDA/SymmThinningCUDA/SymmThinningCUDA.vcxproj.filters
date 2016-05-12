@@ -36,15 +36,6 @@
     <ClInclude Include="include\thinning_base.cuh">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="libs\binvox.h">
-      <Filter>Libs</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\lodepng.h">
-      <Filter>Libs</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\png_loader.h">
-      <Filter>Libs</Filter>
-    </ClInclude>
     <ClInclude Include="test\for_test.h">
       <Filter>test</Filter>
     </ClInclude>
@@ -54,19 +45,13 @@
     <ClInclude Include="test\test_clique.cuh">
       <Filter>test</Filter>
     </ClInclude>
-    <ClInclude Include="libs\param_parser.h">
-      <Filter>Libs</Filter>
-    </ClInclude>
     <ClInclude Include="include\thinning_details.cuh">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="libs\png_io.h">
+    <ClInclude Include="libs\io_shared.h">
       <Filter>Libs\IoMngr</Filter>
     </ClInclude>
     <ClInclude Include="libs\h5_io.h">
-      <Filter>Libs\IoMngr</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\io_shared.h">
       <Filter>Libs\IoMngr</Filter>
     </ClInclude>
   </ItemGroup>
@@ -89,21 +74,6 @@
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="libs\binvox.cpp">
-      <Filter>Libs</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\lodepng.cpp">
-      <Filter>Libs</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\png_loader.cpp">
-      <Filter>Libs</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\png_io.cpp">
-      <Filter>Libs\IoMngr</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\h5_io.cpp">
-      <Filter>Libs\IoMngr</Filter>
-    </ClCompile>
     <ClCompile Include="libs\io_shared.cpp">
       <Filter>Libs\IoMngr</Filter>
     </ClCompile>

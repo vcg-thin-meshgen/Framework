@@ -5,8 +5,6 @@
 #include "clique.cuh"
 #include "thinning_details.cuh"
 
-#include "png_io.h"
-
 namespace thin
 {
 	void initDevice()
@@ -44,13 +42,7 @@ namespace thin
 		packInitParams.useVoxelID = false;
 		DevDataPack thinData(packInitParams);
 		thinData.alloc();
-		// thinData.alloc(ThinningData::USE_BIRTH::F, ThinningData::USE_VOXEL_ID::F);
-		// RecBitsType* d_recBitsArr, *d_A_recBitsArr, *d_B_recBitsArr;
-		
-		// checkCudaErrors(cudaMalloc(&(thinData.recBitsArr), sizeof(RecBitsType) * thinData.arrSize));
-		// checkCudaErrors(cudaMalloc(&(thinData.A_recBitsArr), sizeof(RecBitsType) * thinData.arrSize));
-		// checkCudaErrors(cudaMalloc(&thinData.B_recBitsArr, sizeof(RecBitsType) * thinData.arrSize));
-        
+
 		checkCudaErrors(cudaMemset(thinData.recBitsArr, 0x01, sizeof(RecBitsType) * thinData.arrSize));
 		checkCudaErrors(cudaMemset(thinData.A_recBitsArr, 0, sizeof(RecBitsType) * thinData.arrSize));
 		checkCudaErrors(cudaMemset(thinData.B_recBitsArr, 0, sizeof(RecBitsType) * thinData.arrSize));
@@ -58,10 +50,6 @@ namespace thin
 		// IjkType* d_compactIjkArr;
 		// checkCudaErrors(cudaMalloc(&(thinData.compactIjkArr), sizeof(IjkType) * thinData.arrSize));
 		checkCudaErrors(cudaMemcpy(thinData.compactIjkArr, compactIjkVec.data(), sizeof(IjkType) * thinData.arrSize, cudaMemcpyHostToDevice));
-
-		// ObjIdType* d_voxelIdArr;
-		// checkCudaErrors(cudaMalloc(&d_voxelIdArr, sizeof(ObjIdType) * arrSize));
-		// checkCudaErrors(cudaMemcpy(d_voxelIdArr, voxelIdVec.data(), sizeof(ObjIdType) * arrSize, cudaMemcpyHostToDevice));
 
 		unsigned curIter = 1;
 		unsigned lastIterSize = thinData.arrSize;
@@ -94,7 +82,7 @@ namespace thin
 			checkCudaErrors(cudaGetLastError());
 
 			thinData.arrSize = cp::_shrinkArrs(thinData, blocksDim, threadsDim);
-			assert(arrSize == curIterSize);
+			assert(thinData.arrSize == curIterSize);
 
 			// To-Do:
 			// 1. clean up the d_A/B_recBitsArr accordingly
@@ -127,37 +115,11 @@ namespace thin
 		thinData.dispose();
 	}
 
-	void persistenceIsthmusThinning(const std::vector<IjkType>& compactIjkVec, const std::vector<ObjIdType>& voxelIdVec, std::vector<IjkType>& D_XK, 
-									const IjkType& size3D, unsigned p, int maxIter)
+	void persistenceIsthmusThinningCore(details::DevDataPack& thinData, unsigned curIter, unsigned p, int maxIter)
 	{
-		// using namespace clique;
 		using namespace details;
 		namespace cp = clique::_private;
 
-		// ThinningData thinData(compactIjkVec.size(), size3D);
-		DevDataPack::InitParams packInitParams;
-		packInitParams.arrSize = compactIjkVec.size();
-		packInitParams.size3D = size3D;
-		packInitParams.useBirth = true;
-		packInitParams.useVoxelID = voxelIdVec.size() > 0;
-		DevDataPack thinData(packInitParams);
-
-        thinData.alloc();
-		
-		checkCudaErrors(cudaMemset(thinData.recBitsArr, 0x01, sizeof(RecBitsType) * thinData.arrSize));
-		checkCudaErrors(cudaMemset(thinData.A_recBitsArr, 0, sizeof(RecBitsType) * thinData.arrSize));
-		checkCudaErrors(cudaMemset(thinData.B_recBitsArr, 0, sizeof(RecBitsType) * thinData.arrSize));
-        
-		checkCudaErrors(cudaMemcpy(thinData.compactIjkArr, compactIjkVec.data(), sizeof(IjkType) * thinData.arrSize, cudaMemcpyHostToDevice));
-
-		if (thinData.useVoxelID())
-		{
-			checkCudaErrors(cudaMemcpy(thinData.voxelIdArr, voxelIdVec.data(), sizeof(ObjIdType) * thinData.arrSize, cudaMemcpyHostToDevice));
-		}
-		
-		checkCudaErrors(cudaMemset(thinData.birthArr, 0, sizeof(unsigned) * thinData.arrSize));
-
-		unsigned curIter = 1;
 		unsigned lastIterSize = thinData.arrSize;
         
 		dim3 threadsDim(_numThreads, 1U, 1U);
@@ -194,7 +156,7 @@ namespace thin
 			checkCudaErrors(cudaGetLastError());
 
 			thinData.arrSize = cp::_shrinkArrs(thinData, blocksDim, threadsDim);
-			assert(arrSize == curIterSize);
+			assert(thinData.arrSize == curIterSize);
 
 			// To-Do:
 			// 1. clean up the d_A/B_recBitsArr accordingly
@@ -219,6 +181,40 @@ namespace thin
 			lastIterSize = curIterSize;
 			++curIter;
 		}
+	}
+
+	void persistenceIsthmusThinning(const std::vector<IjkType>& compactIjkVec, const std::vector<ObjIdType>& voxelIdVec, std::vector<IjkType>& D_XK, 
+									const IjkType& size3D, unsigned p, int maxIter)
+	{
+		// using namespace clique;
+		using namespace details;
+		namespace cp = clique::_private;
+
+		// ThinningData thinData(compactIjkVec.size(), size3D);
+		DevDataPack::InitParams packInitParams;
+		packInitParams.arrSize = compactIjkVec.size();
+		packInitParams.size3D = size3D;
+		packInitParams.useBirth = true;
+		packInitParams.useVoxelID = voxelIdVec.size() > 0;
+		DevDataPack thinData(packInitParams);
+
+        thinData.alloc();
+		
+		checkCudaErrors(cudaMemset(thinData.recBitsArr, 0x01, sizeof(RecBitsType) * thinData.arrSize));
+		checkCudaErrors(cudaMemset(thinData.A_recBitsArr, 0, sizeof(RecBitsType) * thinData.arrSize));
+		checkCudaErrors(cudaMemset(thinData.B_recBitsArr, 0, sizeof(RecBitsType) * thinData.arrSize));
+        
+		checkCudaErrors(cudaMemcpy(thinData.compactIjkArr, compactIjkVec.data(), sizeof(IjkType) * thinData.arrSize, cudaMemcpyHostToDevice));
+
+		if (thinData.useVoxelID())
+		{
+			checkCudaErrors(cudaMemcpy(thinData.voxelIdArr, voxelIdVec.data(), sizeof(ObjIdType) * thinData.arrSize, cudaMemcpyHostToDevice));
+		}
+		
+		checkCudaErrors(cudaMemset(thinData.birthArr, 0, sizeof(unsigned) * thinData.arrSize));
+
+		unsigned curIter = 0;
+		persistenceIsthmusThinningCore(thinData, curIter, p, maxIter);
         
 		D_XK.clear();
 		D_XK.resize(thinData.arrSize);
@@ -233,8 +229,8 @@ namespace thin
 		persistenceIsthmusThinning(compactIjkVec, fakeVoxelIdVec, D_XK, size3D, p, maxIter);
 	}
 
-	void chunkPersistenceThinning(details::DevDataPack& thinData, unsigned curIter, unsigned dim, 
-								unsigned p, const dim3& blocksDim, const dim3& threadsDim)
+	void oneChunkThinning(details::DevDataPack& thinData, unsigned curIter, unsigned dim, 
+		unsigned p, const dim3& blocksDim, const dim3& threadsDim)
 	{
 		using namespace thin::clique;
 		namespace cp = thin::clique::_private;

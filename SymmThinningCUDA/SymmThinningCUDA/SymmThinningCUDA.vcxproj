@@ -77,13 +77,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Boost\boost_1_60_0;$(ProjectDir)\test;$(ProjectDir)\libs;$(ProjectDir)\src;$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\HDF_Group\HDF5\1.8.16\include;C:\Boost\boost_1_60_0;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\test;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\libs;F:\Ky\SymmThinningCUDA\SymmThinningCUDA;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>libszip_D.lib;libzlib_D.lib;libhdf5_D.lib;libhdf5_cpp_D.lib;cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Boost\boost_1_60_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\HDF_Group\HDF5\1.8.16\lib;C:\Boost\boost_1_60_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
@@ -98,13 +98,13 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Boost\boost_1_60_0;$(ProjectDir)\test;$(ProjectDir)\libs;$(ProjectDir)\src;$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\HDF_Group\HDF5\1.8.16\include;C:\Boost\boost_1_60_0;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\test;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\libs;F:\Ky\SymmThinningCUDA\SymmThinningCUDA;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>libszip_D.lib;libzlib_D.lib;libhdf5_D.lib;libhdf5_cpp_D.lib;cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Boost\boost_1_60_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\HDF_Group\HDF5\1.8.16\lib;C:\Boost\boost_1_60_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
@@ -121,7 +121,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\HDF_Group\HDF5\1.8.16\include;C:\Boost\boost_1_60_0;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\test;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\libs;F:\Ky\SymmThinningCUDA\SymmThinningCUDA;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\HDF_Group\HDF5\1.8.16\include;C:\Boost\boost_1_60_0;$(ProjectDir)\test;$(ProjectDir)\libs;$(ProjectDir)\src;$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -146,7 +146,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\HDF_Group\HDF5\1.8.16\include;C:\Boost\boost_1_60_0;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\test;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\libs;F:\Ky\SymmThinningCUDA\SymmThinningCUDA;F:\Ky\SymmThinningCUDA\SymmThinningCUDA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\HDF_Group\HDF5\1.8.16\include;C:\Boost\boost_1_60_0;$(ProjectDir)\test;$(ProjectDir)\libs;$(ProjectDir)\src;$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -172,13 +172,8 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="include\thinning.h" />
     <ClInclude Include="include\thinning_base.cuh" />
     <ClInclude Include="include\thinning_details.cuh" />
-    <ClInclude Include="libs\binvox.h" />
     <ClInclude Include="libs\h5_io.h" />
     <ClInclude Include="libs\io_shared.h" />
-    <ClInclude Include="libs\lodepng.h" />
-    <ClInclude Include="libs\param_parser.h" />
-    <ClInclude Include="libs\png_io.h" />
-    <ClInclude Include="libs\png_loader.h" />
     <ClInclude Include="test\for_test.h" />
     <ClInclude Include="test\test_attach.cuh" />
     <ClInclude Include="test\test_clique.cuh" />
@@ -192,12 +187,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <CudaCompile Include="src\thinning_details.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="libs\binvox.cpp" />
-    <ClCompile Include="libs\h5_io.cpp" />
     <ClCompile Include="libs\io_shared.cpp" />
-    <ClCompile Include="libs\lodepng.cpp" />
-    <ClCompile Include="libs\png_io.cpp" />
-    <ClCompile Include="libs\png_loader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

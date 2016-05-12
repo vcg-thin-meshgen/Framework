@@ -6,7 +6,6 @@
 
 #include "thinning_base.cuh"
 #include "clique.cuh"
-#include "png_io.h"
 
 namespace thin
 {
@@ -20,6 +19,9 @@ namespace thin
 	// Run the original symmetric parallel thinning algorithm on the dataset in
 	// `compactIjkVec`. The output crucial voxels are stored in `D_XK`.
 	void isthmusSymmetricThinning(const std::vector<IjkType>& compactIjkVec, std::vector<IjkType>& D_XK, const IjkType& size3D, int maxIter = -1);
+
+	// persistence thinning algorithm core
+	void persistenceIsthmusThinningCore(details::DevDataPack& thinData, unsigned curIter, unsigned p, int maxIter);
 	// Run the symmetric parallel thinning algorithm with persistence on the dataset
 	// in `compactIjkVec`. `voxelIdVec` will store the object ID for each
 	// corresponding voxel. The output crucial voxels are stored in `D_XK`.
@@ -36,6 +38,7 @@ namespace thin
 	// [param] p: the threshold of persistence
 	// [param] maxIter: maximal number of thinning iterations. Set -1 means infinity.
 	void persistenceIsthmusThinning(const std::vector<IjkType>& compactIjkVec, std::vector<IjkType>& D_XK, const IjkType& size3D, unsigned p = 25U, int maxIter = -1);
+
 
 	// Using the chunk-wise thinning requires the user to provide a chunk IO manager
 	// object that implements the required interface:
@@ -57,28 +60,18 @@ namespace thin
 	//      cache it and delay the dumping or other behavior.
 	//      [postcondition] The manager now managers the data for `i`-th slice.
 	//
+	//	 - unsigned numSlices() const
+	//		Return the total number of slices in the dataset.
+	//
+	//	 - unsigned numChunks() const
+	//		Return the total number of chunks the dataset has been divided into.
+	//
+	//	 - std::pair<unsigned, unsigned> sliceRange(unsigned i) const
+	//		Return a pair of the beginning and the ending index of the slices
+	//		covered by the @i-th chunk.
+	//
 	//   - unsigned slice() const
 	//      Return the index of the slice currently being managed.
-	//
-	//   - void beginLoadChunk()
-	//      Notify the manager that the module is about to begin the loading process
-	//      for each slice in the chunk. The manager has an opportunity to run some
-	//      preprocessing for loading the chunk in this function.
-	//
-	//   - void endLoadChunk()
-	//      Notify the manager that the module is about to finish loading the chunk.
-	//      The manager has an opportunity to run some postprocessing for finishing
-	//      loading the chunk in this function.
-	//
-	//   - void beginDumpChunk()
-	//      Notify the manager that the module is about to begin the dumping process
-	//      for each slice in the chunk. The manager has an opportunity to run some
-	//      preprocessing for dumping the chunk in this function.
-	//
-	//   - void endDumpChunk()
-	//      Notify the manager the the module is about to finish dumping the chunk.
-	//      If the manager did not dump each slice in `dump` function, this will be
-	//      its last opportunity to dump the entire chunk of slices to the disk.
 	//
 	//   - void storeID(unsigned x, unsigned y, unsigned ID)
 	//      Stores the object ID `ID` of the voxel at coordinate (`x`, `y`) in the
@@ -171,8 +164,7 @@ namespace thin
 	// does not place any restrictions on how the user is going to implement the
 	// chunk IO manager, as long as it provides the correct interface to
 	// retrieve/store 3D coordinate, object ID, birth data of a voxel and which
-	// set
-	// this voxel is currently in.
+	// set this voxel is currently in.
 	struct GeneralIOPolicy { };
 	// The raw matching IO policy assumes that the user's implementation of chunk IO
 	// manager matches the underlying raw representation of recording bits used in
@@ -248,7 +240,7 @@ namespace thin
 							unsigned beginSlice, const unsigned chunkSize, const unsigned numSlices,
 							unsigned& procBeginIndex, unsigned& procEndIndex)
 			{
-				mngr.beginLoadChunk();
+				// mngr.beginLoadChunk();
 
 				h_thinData.clear();
 				// Compute the begin/end index of the BOTTOM reference slice.
@@ -272,12 +264,24 @@ namespace thin
 				// Load the two top reference slices
 				_loadSlices(policy, h_thinData, mngr, refBeginSlice, refEndSlice);
 
-				mngr.endLoadChunk();
+				// mngr.endLoadChunk();
 
 				assert(h_thinData.compactIjkVec.size() == h_thinData.voxelIdVec.size());
 				assert(h_thinData.compactIjkVec.size() == h_thinData.recBitsVec.size());
 				assert(h_thinData.compactIjkVec.size() == h_thinData.birthVec.size());
 			}
+
+			template <typename MNGR>
+			void _loadChunkI(details::HostDataPack& h_thinData, MNGR& mngr,
+							unsigned chunkI, const unsigned numSlices,
+							unsigned& procBeginIndex, unsigned& procEndIndex)
+			{
+				std::pair<unsigned, unsigned> chunkRange = mngr.chunkRange(chunkI);
+				unsigned chunkSize = chunkRange.second - chunkRange.first;
+
+				_loadChunk(MatchRawIOPolicy(), h_thinData, mngr, chunkRange.first, chunkSize, numSlices, procBeginIndex, procEndIndex);
+			}
+
 			// Stores the data of the voxel in `h_thinData` pointed by `index` into the
 			// slice current being managed by `mngr`. This function is invoked when using
 			// `GeneralIOPolicy`.
@@ -323,7 +327,7 @@ namespace thin
 			void _dumpChunk(const POLICY& policy, const details::HostDataPack& h_thinData, MNGR& mngr,
 							const unsigned procBeginIndex, const unsigned procEndIndex)
 			{
-				mngr.beginDumpChunk();
+				// mngr.beginDumpChunk();
 
 				unsigned index = procBeginIndex;
 				while (index < procEndIndex)
@@ -344,18 +348,187 @@ namespace thin
 					mngr.dump();
 				}
 
-				mngr.endDumpChunk();
+				// mngr.endDumpChunk();
+			}
+
+			template <typename MNGR>
+			inline void _dumpChunk(const details::HostDataPack& h_thinData, MNGR& mngr,
+							const unsigned procBeginIndex, const unsigned procEndIndex)
+			{
+				_dumpChunk(MatchRawIOPolicy(), h_thinData, mngr, procBeginIndex, procEndIndex);
 			}
 		}; // namespace thin::chunk::_private;
 	}; // namespace thin::chunk;
-
-	void chunkPersistenceThinning(details::DevDataPack& thinData, unsigned curIter, unsigned dim, 
-									unsigned p, const dim3& blocksDim, const dim3& threadsDim);
+	
+	// thinning algorithm one a single chunk.
+	// [param] curIter: current iteration
+	// [param] dim: current dimension (rank) of the cliques to detect
+	void oneChunkThinning(details::DevDataPack& thinData, unsigned curIter, unsigned dim, 
+								unsigned p, const dim3& blocksDim, const dim3& threadsDim);
 
 	// Run the thinning on all the chunks sequentially at iteration `curIter` for
 	// dimension `dim`.
-	template <typename POLICY, typename MNGR>
-    void fullThinningOnce(const POLICY& policy, MNGR& mngr,
+	// template <typename POLICY, typename MNGR>
+	template <typename MNGR>
+    static void allChunksThinningOneStep(MNGR& mngr, const IjkType& size3D, unsigned curIter, unsigned dim, unsigned p)
+    {
+		using namespace details;
+		namespace chp = chunk::_private;
+        
+		unsigned numChunks = mngr.numChunks();
+		if (numChunks == 0) return;
+        
+		unsigned numSlices = mngr.numSlices();
+
+		HostDataPack h_thinData;
+		HostDataPack h_thinDataBuffer;
+        
+        // unsigned beginSlice = 0;
+        bool hasOutput = false;
+        
+        unsigned procBeginIndex, procEndIndex;
+        unsigned lastProcBeginIndex, lastProcEndIndex;
+        unsigned nextProcBeginIndex, nextProcEndIndex;
+        
+		mngr.beginOneThinningStep();
+        // chp::_loadChunk(policy, h_thinData, mngr, beginSlice, chunkSize, numSlices, procBeginIndex, procEndIndex);
+        chp::_loadChunkI(h_thinData, mngr, 0, numSlices, procBeginIndex, procEndIndex);
+
+		std::cout << "Cur iter: " << curIter << ", dim: " << dim << std::endl;
+        for (unsigned chunkIdx = 0; chunkIdx < numChunks; ++chunkIdx)
+        {
+            // beginSlice = chunkIdx * chunkSize;
+            std::thread ioThread([&]()
+            {
+                if (hasOutput)
+                {
+                    chp::_dumpChunk(h_thinDataBuffer, mngr, lastProcBeginIndex, lastProcEndIndex);
+                }
+                // chp::_loadChunk(policy, h_thinDataBuffer, mngr, beginSlice + chunkSize, chunkSize, numSlices,
+                //           nextProcBeginIndex, nextProcEndIndex);
+
+				if (chunkIdx + 1U < numChunks)
+				{
+					chp::_loadChunkI(h_thinDataBuffer, mngr, chunkIdx + 1U, numSlices, nextProcBeginIndex, nextProcEndIndex);
+				}
+            });
+            
+			DevDataPack::InitParams packInitParams;
+			packInitParams.arrSize = h_thinData.compactIjkVec.size();
+			packInitParams.size3D = size3D;
+			packInitParams.useBirth = true;
+			packInitParams.useVoxelID = true;
+
+			DevDataPack thinData(packInitParams);
+			thinData.alloc();
+			
+			_copyThinningDataToDevice(thinData, h_thinData);
+			
+			thinData.procBeginIndex = procBeginIndex;
+			thinData.procEndIndex = procEndIndex;
+
+			std::cout << "  chunk: " << chunkIdx << ", size: " << thinData.arrSize 
+					<< ", proc begin: " << procBeginIndex << ", proc end: " << procEndIndex << std::endl;
+
+			dim3 threadsDim(numThreadsPerBlock(), 1U, 1U);
+			dim3 blocksDim((thinData.arrSize + threadsDim.x - 1U) / threadsDim.x, 1U, 1U);
+
+			while (blocksDim.x > 32768U)
+			{
+				blocksDim.x /= 2U;
+				blocksDim.y *= 2U;
+			}
+
+            oneChunkThinning(thinData, curIter, dim, p, blocksDim, threadsDim);
+            _copyThinningDataToHost(h_thinData, thinData);
+			thinData.dispose();
+
+            hasOutput = true;
+            ioThread.join();
+            
+            h_thinData.swap(h_thinDataBuffer);
+            
+            lastProcBeginIndex = procBeginIndex;
+            lastProcEndIndex = procEndIndex;
+            
+            procBeginIndex = nextProcBeginIndex;
+            procEndIndex = nextProcEndIndex;
+        }
+        
+        chp::_dumpChunk(h_thinDataBuffer, mngr, lastProcBeginIndex, lastProcEndIndex);
+        
+		mngr.endOneThinningStep();
+        mngr.swapGroup();
+    }
+
+	// template <typename POLICY, typename MNGR>
+	// void chunkwiseThinning(const POLICY& policy, MNGR& mngr, const unsigned numSlices,
+	template <typename MNGR>
+	void chunkwiseThinning(MNGR& mngr, const IjkType& size3D, unsigned curIter, unsigned dim, unsigned p, unsigned maxIter)
+	{
+		bool ramThinning = (mngr.numChunks() == 1);
+		while ((curIter < maxIter) && (!ramThinning))
+		{
+			while (true)
+			{
+				// fullThinningOnce(policy, mngr, chunkSize, numSlices, size3D, curIter, dim, p);
+				allChunksThinningOneStep(mngr, size3D, curIter, dim, p);
+
+				if (dim == 0)
+				{
+					break;
+				}
+				--dim;
+			}
+
+			dim = 3U;
+			++curIter;
+			
+			// stop using chunk-wise thinning
+			ramThinning = (mngr.numChunks() == 1);
+		}
+		// run thinning using RAM
+		if (ramThinning)
+		{
+			std::cout << "using RAM at iter: " << curIter << std::endl;
+
+			using namespace details;
+			namespace chp = chunk::_private;
+			HostDataPack h_thinData;
+			unsigned procBeginIndex, procEndIndex;
+
+			mngr.beginOneThinningStep();
+			chp::_loadChunkI(h_thinData, mngr, 0, mngr.numSlices(), procBeginIndex, procEndIndex);
+
+			DevDataPack::InitParams packInitParams;
+			packInitParams.arrSize = h_thinData.compactIjkVec.size();
+			packInitParams.size3D = size3D;
+			packInitParams.useBirth = true;
+			packInitParams.useVoxelID = true;
+
+			DevDataPack thinData(packInitParams);
+			thinData.alloc();
+			
+			_copyThinningDataToDevice(thinData, h_thinData);
+			persistenceIsthmusThinningCore(thinData, curIter, p, maxIter);
+
+			h_thinData.clear();
+			procEndIndex = thinData.arrSize;
+			h_thinData.resize(thinData.arrSize);
+			_copyThinningDataToHost(h_thinData, thinData);
+
+			thinData.dispose();
+			chp::_dumpChunk(h_thinData, mngr, procBeginIndex, procEndIndex);
+
+			mngr.endOneThinningStep();
+			mngr.swapGroup();
+		}
+	}
+
+	// Run the thinning on all the chunks sequentially at iteration `curIter` for
+	// dimension `dim`.
+	/*template <typename POLICY, typename MNGR>
+    static void fullThinningOnce(const POLICY& policy, MNGR& mngr,
                           const unsigned chunkSize, const unsigned numSlices,
                           const IjkType& size3D, unsigned curIter, unsigned dim, unsigned p)
     {
@@ -416,7 +589,7 @@ namespace thin
 				blocksDim.y *= 2U;
 			}
 
-            chunkPersistenceThinning(thinData, curIter, dim, p, blocksDim, threadsDim);
+            oneChunkThinning(thinData, curIter, dim, p, blocksDim, threadsDim);
             _copyThinningDataToHost(h_thinData, thinData);
 			thinData.dispose();
 
@@ -435,26 +608,6 @@ namespace thin
         chp::_dumpChunk(policy, h_thinDataBuffer, mngr, lastProcBeginIndex, lastProcEndIndex);
         
         mngr.swapGroup();
-    }
-
-	template <typename POLICY, typename MNGR>
-	void fullThinning(const POLICY& policy, MNGR& mngr,
-					const unsigned chunkSize, const unsigned numSlices,
-					const IjkType& size3D, unsigned curIter, unsigned dim, unsigned toIter, unsigned p)
-	{
-		while (curIter < toIter)
-		{
-			while (true)
-			{
-				fullThinningOnce(policy, mngr, chunkSize, numSlices, size3D, curIter, dim, p);
-
-				if (dim == 0) break;
-				--dim;
-			}
-
-			dim = 3U;
-			++curIter;
-		}
-	}
+    }*/
 }; // namespace thin;
 #endif
