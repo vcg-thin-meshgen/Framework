@@ -22,6 +22,10 @@ add_subdirectory(libs)
 add_executable(main main.cu)
 target_link_libraries(main skeletonize)
 
-target_link_libraries(main io_shared)
+target_link_libraries(main io_shared) # WARNING! CMake is failing to detect changes to this dependency!! make clean!
+
+target_link_libraries(main "-L${HDF5_ROOT}/lib -lhdf5 -lhdf5_cpp -lhdf5_hl")
+
+
 target_compile_features(main PUBLIC cxx_std_11)
 set_property(TARGET main PROPERTY CUDA_SEPARABLE_COMPILATION ON)
