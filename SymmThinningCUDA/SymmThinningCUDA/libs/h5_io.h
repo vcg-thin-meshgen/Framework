@@ -419,7 +419,7 @@ namespace h5_io
 			}
 			catch( DataSetIException error )
 			{
-				error.printError();
+				error.printErrorStack();
 			}
 			// To save us the trouble from detecting whether a dataset exists,
 			// For empty slice, we let the dimension to be 1x1.
@@ -507,7 +507,7 @@ namespace h5_io
 			}
 			catch( DataSetIException error )
 			{
-				error.printError();
+				error.printErrorStack();
 
 			}
 			dataset.write(tmpDataVec.data(), datatype);
