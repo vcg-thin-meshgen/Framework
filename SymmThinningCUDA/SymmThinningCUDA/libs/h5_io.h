@@ -45,7 +45,7 @@ namespace h5_io
 			m_loadChunkRangeMap.clear();
 
 			std::stringstream ss;
-			ss << m_oldGroupname << "\\" << m_chunkRangeFilename;
+			ss << m_oldGroupname << "/" << m_chunkRangeFilename;
 			
 			std::ifstream fh(ss.str());
 			std::string line;
@@ -56,8 +56,15 @@ namespace h5_io
 				lss >> lo >> hi;
 				m_loadChunkRangeMap.push_back(std::make_pair(lo, hi));
 			}
+      
+      if(m_loadChunkRangeMap.size()>0)
+      {
+        m_originalNumSlices = m_loadChunkRangeMap.back().second;
+      } else {
+        std::cout << "Error! m_loadChunkRangeMap vector is empty!" << std::endl;
+        exit(EXIT_FAILURE);
+      }
 
-			m_originalNumSlices = m_loadChunkRangeMap.back().second;
 		}
         
         class Iterator;
@@ -371,7 +378,7 @@ namespace h5_io
 		std::string _getH5Filename(const std::string& group, unsigned chunk) const
 		{
 			std::stringstream ss;
-			ss << group << "\\" << m_filePrefix << chunk << ".h5";
+			ss << group << "/" << m_filePrefix << chunk << ".h5";
 			return ss.str();
 		}
 
@@ -395,7 +402,7 @@ namespace h5_io
 			}
 
 			std::stringstream ss;
-			ss << m_newGroupname << "\\" << m_chunkRangeFilename;
+			ss << m_newGroupname << "/" << m_chunkRangeFilename;
 			std::string filename(ss.str());
 
 			std::ofstream fh(filename);
@@ -419,7 +426,7 @@ namespace h5_io
 			}
 			catch( DataSetIException error )
 			{
-				error.printError();
+				error.printErrorStack();
 			}
 			// To save us the trouble from detecting whether a dataset exists,
 			// For empty slice, we let the dimension to be 1x1.
@@ -507,7 +514,7 @@ namespace h5_io
 			}
 			catch( DataSetIException error )
 			{
-				error.printError();
+				error.printErrorStack();
 
 			}
 			dataset.write(tmpDataVec.data(), datatype);

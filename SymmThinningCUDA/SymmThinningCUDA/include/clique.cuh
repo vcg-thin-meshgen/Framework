@@ -10,10 +10,10 @@
 #include <vector>
 #include <algorithm>					// std::sort
 
-#include <thrust\execution_policy.h>	// thrust::device
-#include <thrust\scan.h>				// thrust::exclusive_scan
-#include <thrust\count.h>				// thrust::count_if
-#include <thrust\reduce.h>				// thrust::reduce
+#include <thrust/execution_policy.h>	// thrust::device
+#include <thrust/scan.h>				// thrust::exclusive_scan
+#include <thrust/count.h>				// thrust::count_if
+#include <thrust/reduce.h>				// thrust::reduce
 
 #include "cuda_includes.h"
 #include "thinning_base.cuh"
